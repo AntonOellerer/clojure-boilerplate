@@ -1,5 +1,5 @@
 (ns api.endpoints
-  (:require [main :as main]
+  (:require [middleware :as middleware]
             [com.stuartsierra.component :as component]
             [ring.adapter.jetty :as jetty]
             [ring.middleware.params :as params]
@@ -11,10 +11,10 @@
       (GET "/" [] "<h1>Hello World</h1>")
       (GET "/:id" [] 
            :path-params [id]
-           (main/get-node-no middleware (Integer. id)))
+           (middleware/get-node-no middleware (Integer. id)))
       (POST "/" [] 
             :form-params [todo]
-            (main/insert-item middleware todo))
+            (middleware/insert-item middleware todo))
       (route/not-found "<h1>Page not found</h1>")))
 
 

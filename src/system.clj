@@ -1,6 +1,6 @@
 (ns system
   (:require [com.stuartsierra.component :as component]
-            [main :as main]
+            [middleware :as middleware]
             [api.endpoints :as endpoints]
             [persistence.database :as db]
             [persistence.connection :as connection]))
@@ -11,6 +11,6 @@
       :connection (connection/new-connection {:host host :port port :dbname dbname :user user :password password})
       :database (component/using (db/new-database) {:connection :connection})
       :middleware (component/using
-             (main/new-main)
+             (middleware/new-middleware)
              {:database :database})
       :web-server (component/using (endpoints/new-web-server api-config) {:middleware :middleware}))))
