@@ -5,18 +5,31 @@
             [honeysql-postgres.helpers :as psqlh]
             [persistence.connection :as connection]))
 
-(defn find-item-by-id [repository {:keys [id]}]
+(defn get-pizza [repository name]
   (-> (select :*)
-      (from :items)
-      (where [:= :itemid id])
+      (from :pizza)
+      (where [:= :name name])
       sql/format
       (->> (connection/query (:connection repository)))))
 
-(defn insert-item [repository {:keys [name-]}]
-  (println repository)
-  (-> (insert-into :items)
-      (columns :name)
-      (values [[name-]])
+(defn find-toppings-by-pizza-name [repository name]
+  (-> (select :topping_name)
+      (from :toppings)
+      (where [:= :pizza_name name])
+      sql/format
+      (->> (connection/query (:connection repository)))))
+
+(defn create-pizza [repository name description]
+  (-> (insert-into :pizza)
+      (columns :name :description)
+      (values [[name description]])
+      sql/format
+      (->> (connection/execute! (:connection repository)))))
+
+(defn create-toppings [repository name toppings]
+  (-> (insert-into :toppings)
+      (columns :pizza_name :topping_name)
+      (values (map list (repeat name) toppings))
       sql/format
       (->> (connection/execute! (:connection repository)))))
 

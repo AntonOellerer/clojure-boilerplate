@@ -3,19 +3,38 @@
             [com.stuartsierra.component :as component]
             [ring.adapter.jetty :as jetty]
             [ring.middleware.params :as params]
+            [ring.util.http-response :refer :all]
             [compojure.api.sweet :refer :all]
+            [schema.core :as s]
             [ring.middleware.reload :refer [wrap-reload]]
             [compojure.route :as route]))
+
+(s/defschema Pizza
+  {(s/optional-key :name) s/Str
+   :description s/Str
+   :toppings [s/Str]})
+
+(defn print-middleware [handler]
+  (fn [request]
+    ; (println request)
+    (let [response (handler request)]
+      (println response)
+      response)))
 
 (defn app-routes [middleware]
   (api
    (GET "/" [] "<h1>Hello You World</h1>")
-   (GET "/:id" []
-     :path-params [id]
-     (middleware/get-node-no middleware (Integer. id)))
-   (POST "/" []
-     :form-params [todo]
-     (middleware/insert-item middleware todo))
+   (GET "/:name" []
+     :path-params [name :- String]
+     :return Pizza
+    ;  :middleware [print-middleware]
+     (let [pizza (middleware/get-pizza middleware name)]
+        (println "Endpoint pizza" pizza)
+        (ok pizza)))
+   (POST "/:name" []
+     :path-params [name :- String]
+     :body [pizza Pizza]
+     (if (seq (middleware/create-pizza middleware name pizza)) (created) (conflict)))
    (route/not-found "<h1>Page not found</h1>")))
 
 (defrecord Handler [middleware]

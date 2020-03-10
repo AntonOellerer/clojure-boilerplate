@@ -1,13 +1,15 @@
 (ns middleware
-  (:require [persistence.database :as db]))
+  (:require [persistence.mapper :as mapper]))
 
-(defn get-node-no [system id]
-  (db/find-item-by-id (:database system) {:id id}))
+(defn get-pizza [system name]
+  (let [pizza (mapper/get-pizza (:mapper system) name)]
+    (println "Pizza: " pizza)
+    pizza))
 
-(defn insert-item [system item]
-  (db/insert-item (:database system) {:name- item}))
+(defn create-pizza [system name pizza]
+  (mapper/create-pizza (:mapper system) name pizza))
 
-(defrecord Middleware [database])
+(defrecord Middleware [mapper])
 
 (defn new-middleware []
   (map->Middleware {}))
