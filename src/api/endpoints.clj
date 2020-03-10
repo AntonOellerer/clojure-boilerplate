@@ -4,26 +4,28 @@
             [ring.adapter.jetty :as jetty]
             [ring.middleware.params :as params]
             [compojure.api.sweet :refer :all]
+            [ring.middleware.reload :refer [wrap-reload]]
             [compojure.route :as route]))
 
 (defn app-routes [middleware]
-    (api
-      (GET "/" [] "<h1>Hello World</h1>")
-      (GET "/:id" [] 
-           :path-params [id]
-           (middleware/get-node-no middleware (Integer. id)))
-      (POST "/" [] 
-            :form-params [todo]
-            (middleware/insert-item middleware todo))
-      (route/not-found "<h1>Page not found</h1>")))
+  (api
+   (GET "/" [] "<h1>Hello You World</h1>")
+   (GET "/:id" []
+     :path-params [id]
+     (middleware/get-node-no middleware (Integer. id)))
+   (POST "/" []
+     :form-params [todo]
+     (middleware/insert-item middleware todo))
+   (route/not-found "<h1>Page not found</h1>")))
 
+(defrecord Handler [middleware]
+  component/Lifecycle
+  (start [component]
+    (if (:handler component)
+      component
+      (assoc component :handler (app-routes middleware))))
 
-(defrecord WebServer [config http-server middleware]
-  component/Lifecycle 
-  (start [this]
-    (assoc this :http-server (jetty/run-jetty (app-routes middleware) config)))
+  (stop [component]
+    (dissoc component :handler)))
 
-  (stop [this]
-    this))
-
-(defn new-web-server [api-config] (map->WebServer {:config api-config}))
+(defn new-handler [] (map->Handler {}))

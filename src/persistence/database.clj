@@ -10,7 +10,7 @@
       (from :items)
       (where [:= :itemid id])
       sql/format
-      (->> (connection/query (:connection repository))))) 
+      (->> (connection/query (:connection repository)))))
 
 (defn insert-item [repository {:keys [name-]}]
   (println repository)
@@ -20,8 +20,7 @@
       sql/format
       (->> (connection/execute! (:connection repository)))))
 
-
 (defrecord Database [connection])
 
-(defn new-database [] 
+(defn new-database []
   (map->Database {}))

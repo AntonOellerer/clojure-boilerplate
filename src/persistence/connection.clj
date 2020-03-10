@@ -1,8 +1,8 @@
-(ns persistence.connection 
+(ns persistence.connection
   (:require [com.stuartsierra.component :as component]
             [clojure.java.jdbc :as jdbc]))
 
-(defrecord Connection [dbtype host port dbname user password])
+(defrecord Connection [db-config])
 
 (defn new-connection [{:keys [host port dbname user password]}]
   (map->Connection {:dbtype "postgresql"

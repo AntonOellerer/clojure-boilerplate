@@ -3,7 +3,7 @@
   :url "https://example.com/FIXME"
   :license {:name "Eclipse Public License"
             :url "https://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.8.0"]
+  :dependencies [[org.clojure/clojure "1.10.1"]
                  [com.stuartsierra/component  "0.4.0"]
                  [honeysql  "0.9.9"]
                  [org.clojure/java.jdbc  "0.7.11"]
@@ -12,7 +12,9 @@
                  [compojure  "1.6.1"]
                  [ring  "1.8.0"]
                  [metosin/compojure-api  "1.1.13"]
+                 [ring-jetty-component "0.3.1"]
                  [nilenso/honeysql-postgres  "0.2.6"]]
+  :plugins [[lein-cljfmt "0.6.7"]]
   :main ^:skip-aot main/-main
   :target-path "target/%s"
   :repl-options {:init-ns user}
