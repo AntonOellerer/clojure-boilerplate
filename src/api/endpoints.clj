@@ -16,7 +16,6 @@
 
 (defn print-middleware [handler]
   (fn [request]
-    ; (println request)
     (let [response (handler request)]
       (println response)
       response)))
@@ -27,10 +26,10 @@
    (GET "/:name" []
      :path-params [name :- String]
      :return Pizza
-    ;  :middleware [print-middleware]
-     (let [pizza (middleware/get-pizza middleware name)]
-        (println "Endpoint pizza" pizza)
-        (ok pizza)))
+     :middleware [print-middleware]
+     (if-let [pizza (middleware/get-pizza middleware name)]
+        (ok pizza)
+        (not-found)))
    (POST "/:name" []
      :path-params [name :- String]
      :body [pizza Pizza]
